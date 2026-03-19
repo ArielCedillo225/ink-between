@@ -1,5 +1,4 @@
 ---
-// src/pages/admin/create.astro
 import Layout from "../../layouts/Layout.astro";
 import "../../styles/global.css";
 ---
@@ -34,10 +33,25 @@ import "../../styles/global.css";
             >Find</button
           >
         </div>
+
+        <div id="results-container" class="mt-4 space-y-2 hidden">
+          <p class="text-[10px] uppercase tracking-widest text-stone-400 mb-2">
+            Select a match:
+          </p>
+          <div id="results-list" class="grid grid-cols-1 gap-2"></div>
+        </div>
+
         <p
           id="search-status"
           class="text-[10px] mt-2 text-stone-400 italic hidden"
         >
+        </p>
+        <p
+          id="no-api-note"
+          class="text-[10px] mt-2 text-amber-600 italic hidden"
+        >
+          ⚠️ Note: No book selected. Entry will be saved without external link
+          or cover.
         </p>
       </div>
 
@@ -46,36 +60,34 @@ import "../../styles/global.css";
           <span class="section-divider">The Core</span>
           <div class="grid grid-cols-1 gap-6">
             <div>
-              <label class="form-label">Title</label>
+              <label class="form-label">Title *</label>
               <input
                 id="field-title"
                 name="title"
                 type="text"
                 required
                 class="form-input font-serif text-lg"
-                placeholder="Book Title"
               />
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="form-label">Author</label>
+                <label class="form-label">Author *</label>
                 <input
                   id="field-author"
                   name="author"
                   type="text"
                   required
                   class="form-input"
-                  placeholder="Author Name"
                 />
               </div>
               <div>
-                <label class="form-label">Genre</label>
+                <label class="form-label">Genre *</label>
                 <input
                   id="field-genre"
                   name="genre"
                   type="text"
+                  required
                   class="form-input"
-                  placeholder="e.g. Science Fiction"
                 />
               </div>
             </div>
@@ -87,29 +99,31 @@ import "../../styles/global.css";
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
             <div class="space-y-4">
               <div>
-                <label class="form-label">Total Pages</label>
+                <label class="form-label">Total Pages *</label>
                 <input
                   id="field-pages"
                   name="pages"
                   type="number"
+                  required
                   class="form-input"
-                  placeholder="000"
                 />
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="form-label">Started</label>
+                  <label class="form-label">Started *</label>
                   <input
                     name="start_date"
                     type="date"
+                    required
                     class="form-input !py-2 text-sm"
                   />
                 </div>
                 <div>
-                  <label class="form-label">Finished</label>
+                  <label class="form-label">Finished *</label>
                   <input
                     name="end_date"
                     type="date"
+                    required
                     class="form-input !py-2 text-sm"
                   />
                 </div>
@@ -119,7 +133,7 @@ import "../../styles/global.css";
             <div
               class="bg-stone-50/50 p-6 rounded-2xl border border-stone-100 flex flex-col items-center justify-center"
             >
-              <label class="form-label mb-3">Overall Rating</label>
+              <label class="form-label mb-3">Overall Rating *</label>
               <div class="star-rating">
                 <input
                   type="radio"
@@ -164,67 +178,54 @@ import "../../styles/global.css";
 
         <div class="space-y-6">
           <span class="section-divider">Reflection</span>
-          <textarea
-            name="review"
-            rows="5"
-            class="form-input resize-none"
-            placeholder="Your thoughts on this journey..."></textarea>
-          <textarea
-            name="quote"
-            rows="2"
-            class="form-input font-serif italic border-l-4 border-stone-100 pl-4"
-            placeholder="“A line to keep forever...”"></textarea>
+          <div>
+            <label class="form-label">Review *</label>
+            <textarea
+              name="review"
+              rows="5"
+              required
+              class="form-input resize-none"
+              placeholder="Required..."></textarea>
+          </div>
+          <div>
+            <label class="form-label">Quote (Optional)</label>
+            <textarea
+              name="quote"
+              rows="2"
+              class="form-input font-serif italic border-l-4 border-stone-100 pl-4"
+            ></textarea>
+          </div>
         </div>
 
         <div
           class="bg-stone-50/30 p-8 rounded-3xl border border-stone-100 space-y-6"
         >
           <span class="section-divider !border-stone-200"
-            >Character Spotlight</span
+            >Character Spotlight (Optional)</span
           >
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <input
               name="favourite_character_name"
               type="text"
               class="form-input bg-white"
-              placeholder="Character Name"
+              placeholder="Name"
             />
             <input
               name="favourite_character_quote"
               type="text"
               class="form-input bg-white italic"
-              placeholder="“Iconic quote...”"
+              placeholder="Quote"
             />
           </div>
           <textarea
             name="favourite_character_review"
             rows="2"
             class="form-input bg-white"
-            placeholder="Why were they special?"></textarea>
+            placeholder="Review"></textarea>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 opacity-60">
-          <div>
-            <label class="form-label text-[10px]">Cover URL</label>
-            <input
-              id="field-cover"
-              name="cover_url"
-              type="text"
-              class="form-input bg-transparent text-[10px] py-1 border-dashed"
-              readonly
-            />
-          </div>
-          <div>
-            <label class="form-label text-[10px]">External Link</label>
-            <input
-              id="field-external"
-              name="external_url"
-              type="text"
-              class="form-input bg-transparent text-[10px] py-1 border-dashed"
-              readonly
-            />
-          </div>
-        </div>
+        <input type="hidden" id="field-cover" name="cover_url" />
+        <input type="hidden" id="field-external" name="external_url" />
 
         <div id="status-container" class="hidden">
           <p
@@ -237,7 +238,7 @@ import "../../styles/global.css";
         <button
           type="submit"
           id="submit-btn"
-          class="w-full bg-stone-900 text-stone-50 py-5 rounded-2xl font-medium hover:bg-black transition-all shadow-xl shadow-stone-200 hover:-translate-y-1 active:translate-y-0"
+          class="w-full bg-stone-900 text-stone-50 py-5 rounded-2xl font-medium hover:bg-black transition-all"
         >
           Archive Entry
         </button>
@@ -251,7 +252,10 @@ import "../../styles/global.css";
 
   const searchBtn = document.getElementById("search-btn");
   const searchInput = document.getElementById("api-search") as HTMLInputElement;
+  const resultsContainer = document.getElementById("results-container");
+  const resultsList = document.getElementById("results-list");
   const searchStatus = document.getElementById("search-status");
+  const noApiNote = document.getElementById("no-api-note");
 
   const fTitle = document.getElementById("field-title") as HTMLInputElement;
   const fAuthor = document.getElementById("field-author") as HTMLInputElement;
@@ -264,29 +268,64 @@ import "../../styles/global.css";
 
   searchBtn?.addEventListener("click", async () => {
     const query = searchInput.value;
-    if (!query || !searchStatus) return;
+    if (!query || !searchStatus || !resultsList || !resultsContainer) return;
 
     searchStatus.innerText = "Searching Open Library...";
     searchStatus.classList.remove("hidden");
+    resultsContainer.classList.add("hidden");
+    noApiNote?.classList.remove("hidden"); // Mostrar nota por defecto
 
     try {
       const response = await fetch(
-        `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=1`,
+        `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=5`,
       );
       const data = await response.json();
 
+      resultsList.innerHTML = "";
+
       if (data.docs && data.docs.length > 0) {
-        const book = data.docs[0];
-        fTitle.value = book.title || "";
-        fAuthor.value = book.author_name ? book.author_name[0] : "";
-        fPages.value =
-          book.number_of_pages_median || book.number_of_pages?.[0] || "";
-        fGenre.value = book.subject ? book.subject[0] : "";
-        fCover.value = book.cover_i
-          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
-          : "";
-        fExternal.value = `https://openlibrary.org${book.key}`;
-        searchStatus.innerText = "✅ Found: " + book.title;
+        resultsContainer.classList.remove("hidden");
+        searchStatus.innerText = `Found ${data.docs.length} matches:`;
+
+        data.docs.forEach((book: any) => {
+          const coverId = book.cover_i;
+          const coverUrl = coverId
+            ? `https://covers.openlibrary.org/b/id/${coverId}-S.jpg`
+            : null;
+          const year = book.first_publish_year || "N/A";
+          const author = book.author_name ? book.author_name[0] : "Unknown";
+
+          const card = document.createElement("div");
+          card.className =
+            "flex items-center gap-4 p-3 bg-white border border-stone-200 rounded-xl cursor-pointer hover:border-stone-400 hover:bg-stone-50 transition-all";
+          card.innerHTML = `
+            <div class="w-12 h-16 bg-stone-100 rounded overflow-hidden flex-shrink-0">
+              ${coverUrl ? `<img src="${coverUrl}" class="w-full h-full object-cover" />` : `<div class="w-full h-full flex items-center justify-center text-[8px] text-stone-300">No Cover</div>`}
+            </div>
+            <div class="flex-1 overflow-hidden">
+              <h4 class="text-sm font-bold truncate text-stone-800">${book.title}</h4>
+              <p class="text-[10px] text-stone-500">${author} • ${year}</p>
+            </div>
+          `;
+
+          card.onclick = () => {
+            fTitle.value = book.title || "";
+            fAuthor.value = author;
+            fPages.value =
+              book.number_of_pages_median || book.number_of_pages?.[0] || "";
+            fGenre.value = book.subject ? book.subject[0] : "";
+            fCover.value = coverId
+              ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
+              : "";
+            fExternal.value = `https://openlibrary.org${book.key}`;
+
+            noApiNote?.classList.add("hidden"); // Ocultar nota si se seleccionó uno
+            resultsContainer.classList.add("hidden");
+            searchStatus.innerText = `✅ Selected: ${book.title}`;
+          };
+
+          resultsList.appendChild(card);
+        });
       } else {
         searchStatus.innerText = "❌ No books found.";
       }
@@ -304,7 +343,7 @@ import "../../styles/global.css";
     e.preventDefault();
     if (!btn || !statusText || !statusContainer) return;
 
-    btn.innerText = "Saving to Library...";
+    btn.innerText = "Saving...";
     btn.disabled = true;
 
     const formData = new FormData(form);
@@ -314,14 +353,12 @@ import "../../styles/global.css";
       ...rawData,
       pages: rawData.pages ? parseInt(rawData.pages.toString()) : null,
       rating: rawData.rating ? parseInt(rawData.rating.toString()) : null,
-      start_date: rawData.start_date || null,
-      end_date: rawData.end_date || null,
     };
 
     try {
       const { error } = await supabase.from("book_reviews").insert([record]);
       if (error) throw error;
-      statusText.innerText = "✅ Archived successfully.";
+      statusText.innerText = "✅ Entry archived!";
       statusText.className =
         "bg-green-50 text-green-700 p-4 rounded-2xl text-center italic border border-green-100";
       statusContainer.classList.remove("hidden");
