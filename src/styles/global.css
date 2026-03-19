@@ -41,4 +41,12 @@
   .star-rating label {
     @apply text-3xl text-stone-200 transition-colors cursor-pointer;
   }
+
+  .auth-only {
+    display: none !important;
+  }
+
+  .auth-only.is-logged {
+    display: inline-block !important;
+  }
 }

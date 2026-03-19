@@ -1,23 +1,60 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro Basics</title>
+  </head>
+  <body>
+    <slot />
+  </body>
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const updateAuthUI = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const authElements = document.querySelectorAll(".auth-only");
+
+    if (session) {
+      // Si hay sesión, mostramos los elementos protegidos
+      authElements.forEach((el) => el.classList.add("is-logged"));
+    } else {
+      // Si no hay, nos aseguramos de que estén ocultos (por si acaso)
+      authElements.forEach((el) => el.classList.remove("is-logged"));
+    }
+  };
+
+  // Escuchar el clic en Cerrar Sesión
+  const signOutBtn = document.getElementById("signout-btn");
+  signOutBtn?.addEventListener("click", async () => {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      // Recargamos para que el script detecte que ya no hay sesión
+      window.location.href = "/";
+    }
+  });
+
+  // Ejecutar al cargar la página
+  updateAuthUI();
+
+  // Bonus: Escuchar cambios de estado de auth (por si expira la sesión)
+  supabase.auth.onAuthStateChange((event, session) => {
+    updateAuthUI();
+  });
+</script>

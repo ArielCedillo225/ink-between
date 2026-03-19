@@ -23,12 +23,12 @@ if (error) {
         The Library
       </h1>
       <p class="text-stone-400 font-light mt-4 text-xl italic">
-        "Digital ink, timeless thoughts."
+        "A place of many worlds"
       </p>
       <div class="mt-8">
         <a
           href="/admin/create"
-          class="inline-block bg-stone-800 text-stone-50 px-8 py-3 rounded-2xl text-sm font-medium hover:bg-black hover:-translate-y-0.5 transition-all shadow-lg shadow-stone-200"
+          class="auth-only inline-block bg-stone-800 text-stone-50 px-8 py-3 rounded-2xl text-sm font-medium hover:bg-black hover:-translate-y-0.5 transition-all shadow-lg shadow-stone-200"
         >
           + New Entry
         </a>
@@ -113,5 +113,31 @@ if (error) {
         )
       }
     </section>
+    <div class="auth-only fixed bottom-8 right-8 z-50">
+      <button
+        id="signout-btn"
+        class="bg-white border border-stone-200 text-stone-500 px-4 py-2 rounded-full text-[10px] uppercase tracking-widest hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all shadow-sm"
+      >
+        Close Session
+      </button>
+    </div>
   </main>
 </Layout>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  // Función para chequear la sesión
+  const checkAuth = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const authElements = document.querySelectorAll(".auth-only");
+
+    if (session) {
+      authElements.forEach((el) => el.classList.add("is-logged"));
+    }
+  };
+
+  checkAuth();
+</script>

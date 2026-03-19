@@ -101,9 +101,18 @@ const formatDate = (dateStr: string) => {
 
         <article class="md:col-span-8 space-y-12">
           <header class="space-y-4">
-            <h1 class="text-6xl font-serif text-stone-900 leading-tight">
-              {book.title}
-            </h1>
+            <div class="flex justify-between items-start">
+              <h1 class="text-6xl font-serif text-stone-900 leading-tight">
+                {book.title}
+              </h1>
+
+              <a
+                href={`/admin/edit/${book.id}`}
+                class="auth-only bg-stone-100 text-stone-600 px-4 py-2 rounded-xl text-xs hover:bg-stone-200 transition-all"
+              >
+                Edit Entry
+              </a>
+            </div>
             <div class="flex items-center gap-4">
               <p class="text-xl text-stone-400 font-light italic">
                 by {book.author}
@@ -171,3 +180,20 @@ const formatDate = (dateStr: string) => {
     </div>
   </main>
 </Layout>
+
+<script>
+  import { supabase } from "../../lib/supabase";
+
+  const checkAuth = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (session) {
+      document
+        .querySelectorAll(".auth-only")
+        .forEach((el) => el.classList.add("is-logged"));
+    }
+  };
+
+  checkAuth();
+</script>

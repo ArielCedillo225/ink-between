@@ -250,6 +250,15 @@ import "../../styles/global.css";
 <script>
   import { supabase } from "../../lib/supabase";
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    // Si no hay sesión, rebota al login
+    window.location.href = "/login";
+  }
+
   const searchBtn = document.getElementById("search-btn");
   const searchInput = document.getElementById("api-search") as HTMLInputElement;
   const resultsContainer = document.getElementById("results-container");
