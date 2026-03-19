@@ -1,0 +1,338 @@
+---
+// src/pages/admin/create.astro
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/global.css";
+---
+
+<Layout title="New Entry | Ink Between">
+  <main class="min-h-screen bg-[#fdfcfb] py-12 px-4 font-sans text-stone-800">
+    <section
+      class="max-w-2xl mx-auto bg-white border border-stone-100 shadow-sm rounded-3xl p-8 md:p-12"
+    >
+      <header class="mb-10 text-center">
+        <h1 class="text-4xl font-serif tracking-tight text-stone-900">
+          New Reading Note
+        </h1>
+        <p class="text-stone-400 font-light mt-2 italic text-lg">
+          Archiving thoughts into the digital shelves.
+        </p>
+      </header>
+
+      <div class="mb-12 bg-stone-50/50 p-6 rounded-2xl border border-stone-100">
+        <label class="form-label !text-stone-400">Search Open Library</label>
+        <div class="flex gap-2">
+          <input
+            id="api-search"
+            type="text"
+            class="form-input flex-1 bg-white"
+            placeholder="Search title or author..."
+          />
+          <button
+            id="search-btn"
+            type="button"
+            class="bg-stone-200 text-stone-600 px-6 rounded-xl hover:bg-stone-300 transition-colors font-medium text-sm"
+            >Find</button
+          >
+        </div>
+        <p
+          id="search-status"
+          class="text-[10px] mt-2 text-stone-400 italic hidden"
+        >
+        </p>
+      </div>
+
+      <form id="book-form" class="space-y-12">
+        <div class="space-y-6">
+          <span class="section-divider">The Core</span>
+          <div class="grid grid-cols-1 gap-6">
+            <div>
+              <label class="form-label">Title</label>
+              <input
+                id="field-title"
+                name="title"
+                type="text"
+                required
+                class="form-input font-serif text-lg"
+                placeholder="Book Title"
+              />
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="form-label">Author</label>
+                <input
+                  id="field-author"
+                  name="author"
+                  type="text"
+                  required
+                  class="form-input"
+                  placeholder="Author Name"
+                />
+              </div>
+              <div>
+                <label class="form-label">Genre</label>
+                <input
+                  id="field-genre"
+                  name="genre"
+                  type="text"
+                  class="form-input"
+                  placeholder="e.g. Science Fiction"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <span class="section-divider">The Ledger</span>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+            <div class="space-y-4">
+              <div>
+                <label class="form-label">Total Pages</label>
+                <input
+                  id="field-pages"
+                  name="pages"
+                  type="number"
+                  class="form-input"
+                  placeholder="000"
+                />
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="form-label">Started</label>
+                  <input
+                    name="start_date"
+                    type="date"
+                    class="form-input !py-2 text-sm"
+                  />
+                </div>
+                <div>
+                  <label class="form-label">Finished</label>
+                  <input
+                    name="end_date"
+                    type="date"
+                    class="form-input !py-2 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-stone-50/50 p-6 rounded-2xl border border-stone-100 flex flex-col items-center justify-center"
+            >
+              <label class="form-label mb-3">Overall Rating</label>
+              <div class="star-rating">
+                <input
+                  type="radio"
+                  id="star5"
+                  name="rating"
+                  value="5"
+                  class="hidden"
+                  checked
+                /><label for="star5">★</label>
+                <input
+                  type="radio"
+                  id="star4"
+                  name="rating"
+                  value="4"
+                  class="hidden"
+                /><label for="star4">★</label>
+                <input
+                  type="radio"
+                  id="star3"
+                  name="rating"
+                  value="3"
+                  class="hidden"
+                /><label for="star3">★</label>
+                <input
+                  type="radio"
+                  id="star2"
+                  name="rating"
+                  value="2"
+                  class="hidden"
+                /><label for="star2">★</label>
+                <input
+                  type="radio"
+                  id="star1"
+                  name="rating"
+                  value="1"
+                  class="hidden"
+                /><label for="star1">★</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <span class="section-divider">Reflection</span>
+          <textarea
+            name="review"
+            rows="5"
+            class="form-input resize-none"
+            placeholder="Your thoughts on this journey..."></textarea>
+          <textarea
+            name="quote"
+            rows="2"
+            class="form-input font-serif italic border-l-4 border-stone-100 pl-4"
+            placeholder="“A line to keep forever...”"></textarea>
+        </div>
+
+        <div
+          class="bg-stone-50/30 p-8 rounded-3xl border border-stone-100 space-y-6"
+        >
+          <span class="section-divider !border-stone-200"
+            >Character Spotlight</span
+          >
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <input
+              name="favourite_character_name"
+              type="text"
+              class="form-input bg-white"
+              placeholder="Character Name"
+            />
+            <input
+              name="favourite_character_quote"
+              type="text"
+              class="form-input bg-white italic"
+              placeholder="“Iconic quote...”"
+            />
+          </div>
+          <textarea
+            name="favourite_character_review"
+            rows="2"
+            class="form-input bg-white"
+            placeholder="Why were they special?"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 opacity-60">
+          <div>
+            <label class="form-label text-[10px]">Cover URL</label>
+            <input
+              id="field-cover"
+              name="cover_url"
+              type="text"
+              class="form-input bg-transparent text-[10px] py-1 border-dashed"
+              readonly
+            />
+          </div>
+          <div>
+            <label class="form-label text-[10px]">External Link</label>
+            <input
+              id="field-external"
+              name="external_url"
+              type="text"
+              class="form-input bg-transparent text-[10px] py-1 border-dashed"
+              readonly
+            />
+          </div>
+        </div>
+
+        <div id="status-container" class="hidden">
+          <p
+            id="status-text"
+            class="text-sm italic text-center p-4 rounded-2xl"
+          >
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full bg-stone-900 text-stone-50 py-5 rounded-2xl font-medium hover:bg-black transition-all shadow-xl shadow-stone-200 hover:-translate-y-1 active:translate-y-0"
+        >
+          Archive Entry
+        </button>
+      </form>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import { supabase } from "../../lib/supabase";
+
+  const searchBtn = document.getElementById("search-btn");
+  const searchInput = document.getElementById("api-search") as HTMLInputElement;
+  const searchStatus = document.getElementById("search-status");
+
+  const fTitle = document.getElementById("field-title") as HTMLInputElement;
+  const fAuthor = document.getElementById("field-author") as HTMLInputElement;
+  const fPages = document.getElementById("field-pages") as HTMLInputElement;
+  const fGenre = document.getElementById("field-genre") as HTMLInputElement;
+  const fCover = document.getElementById("field-cover") as HTMLInputElement;
+  const fExternal = document.getElementById(
+    "field-external",
+  ) as HTMLInputElement;
+
+  searchBtn?.addEventListener("click", async () => {
+    const query = searchInput.value;
+    if (!query || !searchStatus) return;
+
+    searchStatus.innerText = "Searching Open Library...";
+    searchStatus.classList.remove("hidden");
+
+    try {
+      const response = await fetch(
+        `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=1`,
+      );
+      const data = await response.json();
+
+      if (data.docs && data.docs.length > 0) {
+        const book = data.docs[0];
+        fTitle.value = book.title || "";
+        fAuthor.value = book.author_name ? book.author_name[0] : "";
+        fPages.value =
+          book.number_of_pages_median || book.number_of_pages?.[0] || "";
+        fGenre.value = book.subject ? book.subject[0] : "";
+        fCover.value = book.cover_i
+          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`
+          : "";
+        fExternal.value = `https://openlibrary.org${book.key}`;
+        searchStatus.innerText = "✅ Found: " + book.title;
+      } else {
+        searchStatus.innerText = "❌ No books found.";
+      }
+    } catch (e) {
+      searchStatus.innerText = "❌ Connection error.";
+    }
+  });
+
+  const form = document.getElementById("book-form") as HTMLFormElement;
+  const statusContainer = document.getElementById("status-container");
+  const statusText = document.getElementById("status-text");
+  const btn = document.getElementById("submit-btn") as HTMLButtonElement;
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!btn || !statusText || !statusContainer) return;
+
+    btn.innerText = "Saving to Library...";
+    btn.disabled = true;
+
+    const formData = new FormData(form);
+    const rawData = Object.fromEntries(formData);
+
+    const record = {
+      ...rawData,
+      pages: rawData.pages ? parseInt(rawData.pages.toString()) : null,
+      rating: rawData.rating ? parseInt(rawData.rating.toString()) : null,
+      start_date: rawData.start_date || null,
+      end_date: rawData.end_date || null,
+    };
+
+    try {
+      const { error } = await supabase.from("book_reviews").insert([record]);
+      if (error) throw error;
+      statusText.innerText = "✅ Archived successfully.";
+      statusText.className =
+        "bg-green-50 text-green-700 p-4 rounded-2xl text-center italic border border-green-100";
+      statusContainer.classList.remove("hidden");
+      setTimeout(() => (window.location.href = "/"), 1200);
+    } catch (err: any) {
+      statusText.innerText = "❌ Error: " + err.message;
+      statusText.className =
+        "bg-red-50 text-red-700 p-4 rounded-2xl text-center italic border border-red-100";
+      statusContainer.classList.remove("hidden");
+      btn.disabled = false;
+      btn.innerText = "Retry";
+    }
+  });
+</script>
