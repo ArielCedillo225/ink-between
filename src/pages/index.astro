@@ -1,11 +1,10 @@
 ---
-export const prerender = false; // <--- ESTO ES VITAL
+export const prerender = false;
 
 import Layout from "../layouts/Layout.astro";
 import { supabase } from "../lib/supabase";
 import "../styles/global.css";
 
-// Traemos los datos de Supabase
 const { data: posts, error } = await supabase
   .from("book_reviews")
   .select("*")
@@ -18,14 +17,20 @@ if (error) {
 
 <Layout title="Library | Ink Between">
   <main class="min-h-screen bg-[#fdfcfb] py-20 px-6">
-    <header class="max-w-5xl mx-auto mb-16 border-b border-stone-100 pb-12">
-      <h1 class="text-5xl font-serif text-stone-800 tracking-tight">
+    <header class="max-w-5xl mx-auto mb-12 border-b border-stone-100 pb-12">
+      <h1
+        class="text-5xl font-serif text-stone-800 tracking-tight text-center md:text-left"
+      >
         The Library
       </h1>
-      <p class="text-stone-400 font-light mt-4 text-xl italic">
-        "A place of many worlds"
-      </p>
-      <div class="mt-8">
+      <div
+        class="flex flex-col md:flex-row justify-between items-center mt-4 gap-6"
+      >
+        <p
+          class="text-stone-400 font-light text-xl italic text-center md:text-left"
+        >
+          "A place of many worlds"
+        </p>
         <a
           href="/admin/create"
           class="auth-only inline-block bg-stone-800 text-stone-50 px-8 py-3 rounded-2xl text-sm font-medium hover:bg-black hover:-translate-y-0.5 transition-all shadow-lg shadow-stone-200"
@@ -35,73 +40,122 @@ if (error) {
       </div>
     </header>
 
+    <section class="max-w-5xl mx-auto mb-16 space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="md:col-span-2 relative">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search by title, author or genre..."
+            class="w-full bg-white border border-stone-200 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-stone-400 transition-all shadow-sm"
+          />
+        </div>
+        <div class="relative">
+          <select
+            id="sort-select"
+            class="w-full bg-white border border-stone-200 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-stone-400 appearance-none cursor-pointer shadow-sm text-stone-600"
+          >
+            <option value="created_at-desc">Latest Added</option>
+            <option value="title-asc">Title (A-Z)</option>
+            <option value="author-asc">Author (A-Z)</option>
+            <option value="rating-desc">Highest Rating</option>
+            <option value="start_date-desc">Reading Start (Newest)</option>
+            <option value="end_date-desc">Reading End (Newest)</option>
+            <option value="genre-asc">Genre (A-Z)</option>
+          </select>
+          <div
+            class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400"
+          >
+            ↓
+          </div>
+        </div>
+      </div>
+      <p
+        id="results-count"
+        class="text-[10px] uppercase tracking-widest text-stone-400 px-2"
+      >
+        Showing all books
+      </p>
+    </section>
+
     <section class="max-w-5xl mx-auto">
       {
         posts && posts.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+          <div
+            id="books-grid"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16"
+          >
             {posts.map((book) => (
-              <a href={`/book/${book.id}`} class="group">
-                <article class="group">
-                  <div class="aspect-[3/4] bg-stone-100 rounded-2xl overflow-hidden mb-8 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500 border border-stone-200/50 relative">
-                    {/* Imagen de Portada */}
-                    {book.cover_url ? (
-                      <img
-                        src={book.cover_url}
-                        alt={book.title}
-                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div class="absolute inset-0 flex items-center justify-center p-8 text-center bg-stone-50">
-                        <span class="text-stone-300 font-serif italic text-xl">
-                          {book.title}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Overlay con la Quote al hacer Hover */}
-                    <div class="absolute inset-0 bg-stone-900/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center p-8">
-                      <p class="text-stone-50 font-serif italic text-center text-sm leading-relaxed">
-                        {book.quote
-                          ? `${book.quote}`
-                          : "No quote archived yet."}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="space-y-3">
-                    <div class="flex justify-between items-start">
-                      <h2 class="text-2xl font-serif text-stone-800 leading-tight">
-                        {book.title}
-                      </h2>
-                      <div class="flex items-center gap-0.5 pt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <span
-                            class={
-                              i < (book.rating || 0)
-                                ? "text-amber-500 text-xs"
-                                : "text-stone-200 text-xs"
-                            }
-                          >
-                            ★
+              <div
+                class="book-card"
+                data-title={book.title.toLowerCase()}
+                data-author={book.author.toLowerCase()}
+                data-genre={book.genre?.toLowerCase() || ""}
+                data-rating={book.rating}
+                data-created_at={book.created_at}
+                data-start_date={book.start_date || ""}
+                data-end_date={book.end_date || ""}
+              >
+                <a href={`/book/${book.id}`} class="group">
+                  <article>
+                    <div class="aspect-[3/4] bg-stone-100 rounded-2xl overflow-hidden mb-8 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500 border border-stone-200/50 relative">
+                      {book.cover_url ? (
+                        <img
+                          src={book.cover_url}
+                          alt={book.title}
+                          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div class="absolute inset-0 flex items-center justify-center p-8 text-center bg-stone-50">
+                          <span class="text-stone-300 font-serif italic text-xl">
+                            {book.title}
                           </span>
-                        ))}
+                        </div>
+                      )}
+
+                      <div class="absolute inset-0 bg-stone-900/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center p-8">
+                        <p class="text-stone-50 font-serif italic text-center text-sm leading-relaxed">
+                          {book.quote
+                            ? `${book.quote}`
+                            : "No quote archived yet."}
+                        </p>
                       </div>
                     </div>
 
-                    <p class="text-stone-400 font-medium uppercase tracking-[0.2em] text-[10px]">
-                      {book.author}
-                    </p>
+                    <div class="space-y-3">
+                      <div class="flex justify-between items-start gap-2">
+                        <h2 class="text-2xl font-serif text-stone-800 leading-tight">
+                          {book.title}
+                        </h2>
+                        <div class="flex items-center gap-0.5 pt-1 flex-shrink-0">
+                          {[...Array(5)].map((_, i) => (
+                            <span
+                              class={
+                                i < (book.rating || 0)
+                                  ? "text-amber-500 text-xs"
+                                  : "text-stone-200 text-xs"
+                              }
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                      </div>
 
-                    {/* Tag del Género */}
-                    {book.genre && (
-                      <span class="inline-block text-[10px] text-stone-400 border border-stone-200 px-2 py-0.5 rounded-full uppercase tracking-widest">
-                        {book.genre}
-                      </span>
-                    )}
-                  </div>
-                </article>
-              </a>
+                      <p class="text-stone-400 font-medium uppercase tracking-[0.2em] text-[10px]">
+                        {book.author}
+                      </p>
+
+                      {book.genre && (
+                        <span class="inline-block text-[10px] text-stone-400 border border-stone-200 px-2 py-0.5 rounded-full uppercase tracking-widest">
+                          {book.genre}
+                        </span>
+                      )}
+                    </div>
+                  </article>
+                </a>
+              </div>
             ))}
           </div>
         ) : (
@@ -112,7 +166,13 @@ if (error) {
           </div>
         )
       }
+      <div id="no-results" class="hidden text-center py-20">
+        <p class="text-stone-400 italic font-light text-lg">
+          No books match your search...
+        </p>
+      </div>
     </section>
+
     <div class="auth-only fixed bottom-8 right-8 z-50">
       <button
         id="signout-btn"
@@ -125,19 +185,79 @@ if (error) {
 </Layout>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  const searchInput = document.getElementById(
+    "search-input",
+  ) as HTMLInputElement;
+  const sortSelect = document.getElementById(
+    "sort-select",
+  ) as HTMLSelectElement;
+  const booksGrid = document.getElementById("books-grid");
+  const noResults = document.getElementById("no-results");
+  const resultsCount = document.getElementById("results-count");
 
-  // Función para chequear la sesión
-  const checkAuth = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    const authElements = document.querySelectorAll(".auth-only");
+  // Obtenemos todas las cards una sola vez para mejorar performance
+  const allCards = Array.from(
+    document.querySelectorAll(".book-card"),
+  ) as HTMLElement[];
 
-    if (session) {
-      authElements.forEach((el) => el.classList.add("is-logged"));
+  function filterAndSort() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const [sortField, sortOrder] = sortSelect.value.split("-");
+
+    // 1. Filtrado
+    const filteredCards = allCards.filter((card) => {
+      // Usamos ?? "" para asegurar que siempre sea un string
+      const title = card.dataset.title ?? "";
+      const author = card.dataset.author ?? "";
+      const genre = card.dataset.genre ?? "";
+
+      const matches =
+        title.includes(searchTerm) ||
+        author.includes(searchTerm) ||
+        genre.includes(searchTerm);
+
+      card.style.display = matches ? "block" : "none";
+      return matches;
+    });
+
+    // 2. Ordenamiento
+    filteredCards.sort((a, b) => {
+      let valA = a.dataset[sortField] || "";
+      let valB = b.dataset[sortField] || "";
+
+      // Manejo de números (rating)
+      if (sortField === "rating") {
+        return sortOrder === "asc"
+          ? Number(valA) - Number(valB)
+          : Number(valB) - Number(valA);
+      }
+
+      // Manejo de fechas y texto
+      if (sortOrder === "asc") {
+        return valA.localeCompare(valB);
+      } else {
+        return valB.localeCompare(valA);
+      }
+    });
+
+    // 3. Re-inyectar en el DOM en el nuevo orden
+    filteredCards.forEach((card) => booksGrid?.appendChild(card));
+
+    // 4. UI Feedback
+    if (filteredCards.length === 0) {
+      noResults?.classList.remove("hidden");
+      booksGrid?.classList.add("hidden");
+      if (resultsCount) resultsCount.innerText = "No matches found";
+    } else {
+      noResults?.classList.add("hidden");
+      booksGrid?.classList.remove("hidden");
+      if (resultsCount) {
+        resultsCount.innerText = `Showing ${filteredCards.length} ${filteredCards.length === 1 ? "book" : "books"}`;
+      }
     }
-  };
+  }
 
-  checkAuth();
+  // Event Listeners
+  searchInput?.addEventListener("input", filterAndSort);
+  sortSelect?.addEventListener("change", filterAndSort);
 </script>

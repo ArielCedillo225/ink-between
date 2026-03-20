@@ -180,20 +180,3 @@ const formatDate = (dateStr: string) => {
     </div>
   </main>
 </Layout>
-
-<script>
-  import { supabase } from "../../lib/supabase";
-
-  const checkAuth = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (session) {
-      document
-        .querySelectorAll(".auth-only")
-        .forEach((el) => el.classList.add("is-logged"));
-    }
-  };
-
-  checkAuth();
-</script>
